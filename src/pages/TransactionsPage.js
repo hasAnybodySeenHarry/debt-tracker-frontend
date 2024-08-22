@@ -24,8 +24,7 @@ function TransactionsPage() {
             Authorization: `Bearer ${token}`
           },
           params: {
-            debt_id: parseInt(debtId, 10),
-            sort: 'created_at'
+            debt_id: parseInt(debtId, 10)
           }
         });
         setTransactions(response.data.data);
