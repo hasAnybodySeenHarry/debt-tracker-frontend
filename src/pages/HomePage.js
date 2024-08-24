@@ -14,6 +14,7 @@ function HomePage() {
           <Link to="/debts" className="text-white text-lg font-semibold hover:text-gray-400 transition">Debts</Link>
         </nav> */}
         <div className="flex items-center space-x-4">
+          <Link to="/notifications" className="text-white text-lg font-semibold hover:text-gray-400 transition">Notifications</Link>
           {token ? (
             <>
               <span className="text-white font-semibold">{user ? user.name : 'User'}</span>

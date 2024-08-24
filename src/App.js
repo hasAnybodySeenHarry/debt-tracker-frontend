@@ -8,6 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import LenderDebtsPage from './pages/LenderDebtsPage';
 import './axiosSetup';
 import AuthRoute from './components/AuthRoute';
+import NotificationsPage from './pages/NotificationsPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/transactions/:debtId" element={<AuthRoute element={<TransactionsPage />} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path='/debts/lender' element={<AuthRoute element={<LenderDebtsPage />} />} />
+          <Route path='/notifications' element={<NotificationsPage />} />
         </Routes>
       </Router>
     </AuthProvider>
