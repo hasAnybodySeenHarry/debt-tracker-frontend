@@ -1,33 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 function NotificationsPage() {
-  const [notifications, setNotifications] = useState([
-    {
-      message: "John Doe liked your photo.",
-      timestamp: new Date().toISOString()
-    },
-    {
-      message: "Jane Smith commented on your post.",
-      timestamp: new Date().toISOString()
-    },
-    {
-      message: "You have a new friend request from Mike Ross.",
-      timestamp: new Date().toISOString()
-    },
-    {
-      message: "Sarah Connor shared your post.",
-      timestamp: new Date().toISOString()
-    },
-    {
-      message: "Your event 'React Conference' is tomorrow.",
-      timestamp: new Date().toISOString()
-    }
-  ]);
-
+  const [notifications, setNotifications] = useState([]);
   const [hiddenNotifications, setHiddenNotifications] = useState([]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://yourserver.com/notifications/v1/notifications/subscribe');
+    const ws = new WebSocket('ws://localhost:8082/v1/notifications/subscribe');
+
+    ws.onopen = () => {
+      console.log('WebSocket connection established');
+    };
 
     ws.onmessage = (event) => {
       const notification = JSON.parse(event.data);
@@ -43,35 +25,57 @@ function NotificationsPage() {
     };
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newNotification = {
-        message: `New notification at ${new Date().toLocaleTimeString()}`,
-        timestamp: new Date().toISOString()
-      };
-      addNotification(newNotification);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const addNotification = (notification) => {
-    setNotifications(prev => {
-        const updatedNotifications = [...prev];
-        
-        if (updatedNotifications.length >= 10) {
-        setHiddenNotifications(hiddenNotifications => [
-            ...hiddenNotifications,
-            updatedNotifications.pop()
-        ]);
-        }
-        
-        updatedNotifications.unshift(notification);
-        
-        return updatedNotifications;
-    });
+    const formattedNotification = {
+      message: formatNotificationMessage(notification),
+      timestamp: notification.metadata.timestamp
     };
 
+    setNotifications((prev) => {
+      const updatedNotifications = [...prev];
+
+      if (updatedNotifications.length >= 10) {
+        setHiddenNotifications((hiddenNotifications) => [
+          ...hiddenNotifications,
+          updatedNotifications.pop(),
+        ]);
+      }
+
+      updatedNotifications.unshift(formattedNotification);
+
+      return updatedNotifications;
+    });
+  };
+
+  const formatNotificationMessage = (notification) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user.id;
+    const { metadata, data } = notification;
+    const { lender, borrower, amount, description, category } = data;
+
+    switch (metadata.type) {
+      case 'transaction_created':
+        if (userId === borrower.id) {
+          return amount > 0
+            ? `You took ${amount} USD again from ${lender.name} with a description of ${description}.`
+            : `You paid off ${Math.abs(amount)} USD to ${lender.name} with a description of ${description}.`;
+        } else if (userId === lender.id) {
+          return amount > 0
+            ? `You lent ${borrower.name} ${amount} USD again with a description of ${description}.`
+            : `You received ${Math.abs(amount)} USD back from ${borrower.name}.`;
+        }
+        break;
+      case 'debt_created':
+        if (userId === lender.id) {
+          return `You lent ${data.total} USD to ${borrower.name} under the category of ${category}.`;
+        } else if (userId === borrower.id) {
+          return `You borrowed ${data.total} USD from ${lender.name} under the category of ${category}.`;
+        }
+        break;
+      default:
+        return 'Unknown notification type';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-4">
