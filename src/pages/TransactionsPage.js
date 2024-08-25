@@ -19,7 +19,7 @@ function TransactionsPage() {
 
     const fetchTransactions = async () => {
       try {
-        const response = await api.get(`/v1/transactions`, {
+        const response = await api.get(`/expenses/v1/transactions`, {
           headers: {
             Authorization: `Bearer ${token}`
           },
@@ -45,7 +45,7 @@ function TransactionsPage() {
     if (!token) return;
 
     try {
-      const response = await api.post(`/v1/transactions`, transaction, {
+      const response = await api.post(`/expenses/v1/transactions`, transaction, {
         headers: {
           Authorization: `Bearer ${token}`
         }

@@ -18,7 +18,7 @@ function DebtsPage() {
 
     const fetchLenders = async () => {
       try {
-        const response = await api.get('v1/users', {
+        const response = await api.get('/expenses/v1/users', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -42,7 +42,7 @@ function DebtsPage() {
 
     const fetchDebts = async () => {
       try {
-        const response = await api.get('/v1/debts', {
+        const response = await api.get('/expenses/v1/debts', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -65,7 +65,7 @@ function DebtsPage() {
     if (!token) return;
 
     try {
-      const response = await api.post('/v1/debts', debt, {
+      const response = await api.post('/expenses/v1/debts', debt, {
         headers: {
           Authorization: `Bearer ${token}`
         }

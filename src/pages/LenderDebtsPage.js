@@ -17,7 +17,7 @@ function LenderDebtsPage() {
 
     const fetchDebts = async () => {
       try {
-        const response = await api.get(`/v1/debts/lender`, {
+        const response = await api.get(`/expenses/v1/debts/lender`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -56,7 +56,7 @@ function LenderDebtsPage() {
         }
 
         try {
-          await api.delete(`/v1/debts/${draggingDebt.id}`, {
+          await api.delete(`/expenses/v1/debts/${draggingDebt.id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
               'X-Expected-Version': draggingDebt.version
