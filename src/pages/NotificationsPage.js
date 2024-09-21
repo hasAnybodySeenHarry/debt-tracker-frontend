@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { BASE_URL } from '../config';
 
 function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
   const [hiddenNotifications, setHiddenNotifications] = useState([]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8082/v1/notifications/subscribe');
+    const ws = new WebSocket(`ws://${BASE_URL}/notifier/v1/notifications/subscribe`);
 
     ws.onopen = () => {
       console.log('WebSocket connection established');
